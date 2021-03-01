@@ -18,9 +18,9 @@ pipeline
 		string(name: 'DOCKER_PORT', defaultValue: '3000', description: 'Docker port')
 	}
 
-    /*stages
+    stages
     {
-		stage ('Stage maven')
+		/*stage ('Stage maven')
 		{
 			steps
 			{
