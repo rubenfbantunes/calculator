@@ -34,7 +34,7 @@ pipeline
             {
 				sh "docker rmi -f ${DOCKER_IMAGE_NAME}"
 				sh "docker build -t ${DOCKER_IMAGE_NAME}:v1.0 ."
-				sh "docker login -u $NEXUS_CREDENTIAL_ID_USR -p $NEXUS_CREDENTIAL_ID_PSW localhost:8082"
+				sh "docker login -u ${NEXUS_CREDENTIAL_ID_USR} -p ${NEXUS_CREDENTIAL_ID_PSW} localhost:8082"
 				sh "docker tag ${DOCKER_IMAGE_NAME} localhost:8082/${DOCKER_IMAGE_NAME}:v1.0"
 				sh "docker push localhost:8082/${DOCKER_IMAGE_NAME}:v1.0"
 				sh "curl -v --user '${NEXUS_CREDENTIAL_ID}' --upload-file .*.jar ${NEXUS_URL}"
