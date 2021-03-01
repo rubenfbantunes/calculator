@@ -6,8 +6,8 @@ pipeline
     parameters
     {
         // Tem que se ir ao Jenkins > Configure > This project is parameterized. 
-        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'image_name', description: 'Docker image name')
-        string(name: 'DOCKER_CONTAINER_NAME', defaultValue: 'container_name', description: 'Docker container name')
+        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'calculadora_img', description: 'Docker image name')
+        string(name: 'DOCKER_CONTAINER_NAME', defaultValue: 'calculadora_cont', description: 'Docker container name')
         string(name: 'DOCKER_PORT', defaultValue: '3000', description: 'Docker port')
     }
  
@@ -19,12 +19,10 @@ pipeline
         {
             steps
             {
-				withCredentials([usernameColonPassword(credentialsId: 'nexusid', variable: 'login_nexus')]) {
                 sh "docker rmi -f ${DOCKER_IMAGE_NAME}:v1.0"
                 sh "docker build -t ${DOCKER_IMAGE_NAME}:v1.0 ."
                 sh "javac *.java"
                 sh "jar cfe calculator.jar calculator *.class"
-				}
             }
         }
 		stage('Enviar artefacto para Jenkins e Nexus')
