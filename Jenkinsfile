@@ -30,7 +30,7 @@ pipeline
             steps
             {
 				withCredentials([usernameColonPassword(credentialsId: 'nexusid', variable: 'login_nexus')]) {
-                sh 'curl -v -u "$login_nexus" --upload-file /var/lib/jenkins/workspace/Calculator/calculator.jar http://nexus:8081/repository/my-raw/'
+                sh 'curl -v -u "$login_nexus" --upload-file http://nexus:8081/repository/my-raw/'
 				}
             }
         }
