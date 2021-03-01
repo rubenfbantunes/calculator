@@ -46,7 +46,7 @@ pipeline
             steps
             {
 				sh "docker rm -f ${DOCKER_CONTAINER_NAME}"
-				sh "docker run -d -p ${DOCKER_PORT}:8080 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+				//sh "docker run -d -p ${DOCKER_PORT}:8080 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
             }
         }
 
