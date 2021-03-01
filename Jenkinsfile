@@ -44,14 +44,14 @@ pipeline
 			}
 		}
   
-        /* Apaga os dados do workspace.
+        // Apaga os dados do workspace.
         stage('Stage D - Clean up resources')
         {
             steps
             {
                 cleanWs()
             }
-        }*/
+        }
         
     }
 }
