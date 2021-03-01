@@ -1,63 +1,45 @@
 pipeline
 {
-	agent {
-		label "mvn-1"
-	}
-	environment {
-        //NEXUS_VERSION = "nexus3"
-        //NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "http://localhost:8081/repository/my-raw/"
-        //NEXUS_REPOSITORY = "my-raw"
-        NEXUS_CREDENTIAL_ID = credentials('nexusid')
+    agent {
+        label "mvn"
     }
-	parameters
-	{
-		// Tem que se ir ao Jenkins > Configure > This project is parameterized. 
-		string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'default_name', description: 'Docker image name')
-		string(name: 'DOCKER_CONTAINER_NAME', defaultValue: 'default_name', description: 'Docker container name')
-		string(name: 'DOCKER_PORT', defaultValue: '3000', description: 'Docker port')
-	}
-
-    stages
+    parameters
     {
-		/*stage ('Stage maven')
-		{
-			steps
-			{
-				sh 'mvn clean package'
-			}
-		}*/
-  
+        // Tem que se ir ao Jenkins > Configure > This project is parameterized. 
+        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'image_name', description: 'Docker image name')
+        string(name: 'DOCKER_CONTAINER_NAME', defaultValue: 'container_name', description: 'Docker container name')
+        string(name: 'DOCKER_PORT', defaultValue: '3000', description: 'Docker port')
+    }
+ 
+ 
+     stages
+    {
+ 
         stage('Stage docker build')
         {
             steps
             {
-				sh "docker rmi -f ${DOCKER_IMAGE_NAME}"
-				sh "docker build -t ${DOCKER_IMAGE_NAME}:v1.0 ."
-				sh "docker login -u ${NEXUS_CREDENTIAL_ID_USR} -p ${NEXUS_CREDENTIAL_ID_PSW} localhost:8082"
-				sh "docker tag ${DOCKER_IMAGE_NAME} localhost:8082/${DOCKER_IMAGE_NAME}:v1.0"
-				sh "docker push localhost:8082/${DOCKER_IMAGE_NAME}:v1.0"
-				sh "curl -v --user '${NEXUS_CREDENTIAL_ID}' --upload-file .*.jar ${NEXUS_URL}"
+				withCredentials([usernameColonPassword(credentialsId: 'nexusid', variable: 'login_nexus')]) {
+                sh "docker rmi -f ${DOCKER_IMAGE_NAME}"
+                sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+                sh "docker login -u "$login_nexus" localhost:8082"
+                sh "docker tag ${DOCKER_IMAGE_NAME} localhost:8082/${DOCKER_IMAGE_NAME}"
+                sh "docker push localhost:8082/${DOCKER_IMAGE_NAME}"
+                sh "javac *.java"
+                sh "jar cfe calculator.jar calculator *.class"
+                sh 'curl -v -u "$login_nexus" --upload-file upload-file /var/lib/jenkins/workspace/java-calculator-nexus/calculator.jar http://nexus:8081/repository/my-raw/'
+				}
             }
         }
-
-		stage('Stage docker run')
+  
+        // Apaga os dados do workspace.
+        stage('Stage D - Clean up resources')
         {
             steps
             {
-				sh "docker rm -f ${DOCKER_CONTAINER_NAME}"
-				//sh "docker run -d -p ${DOCKER_PORT}:8080 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+                cleanWs()
             }
         }
-
-		// Apaga os dados do workspace.
-		stage('Stage D - Clean up resources')
-		{
-			steps
-			{
-				cleanWs()
-			}
-		}
-		
+        
     }
 }
