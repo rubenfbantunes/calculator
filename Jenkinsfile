@@ -18,7 +18,7 @@ pipeline
 		string(name: 'DOCKER_PORT', defaultValue: '3000', description: 'Docker port')
 	}
 
-    stages
+    /*stages
     {
 		stage ('Stage maven')
 		{
@@ -26,14 +26,14 @@ pipeline
 			{
 				sh 'mvn clean package'
 			}
-		}
+		}*/
   
         stage('Stage docker build')
         {
             steps
             {
 				sh "docker rmi -f ${DOCKER_IMAGE_NAME}"
-				sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+				sh "docker build -t ${DOCKER_IMAGE_NAME}:v1.0 ."
 				sh "docker login ${NEXUS_CREDENTIAL_ID} localhost:8082"
 				sh "docker tag ${DOCKER_IMAGE_NAME} localhost:8082/${DOCKER_IMAGE_NAME}:v1.0"
 				sh "docker push localhost:8082/${DOCKER_IMAGE_NAME}:v1.0"
