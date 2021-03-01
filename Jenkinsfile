@@ -1,13 +1,13 @@
 pipeline
 {
     agent {
-        label "mvn"
+        label "mvn-1"
     }
     parameters
     {
         // Tem que se ir ao Jenkins > Configure > This project is parameterized. 
-        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'image_name', description: 'Docker image name')
-        string(name: 'DOCKER_CONTAINER_NAME', defaultValue: 'container_name', description: 'Docker container name')
+        string(name: 'DOCKER_IMAGE_NAME', calculadoraimg: 'image_name', description: 'Docker image name')
+        string(name: 'DOCKER_CONTAINER_NAME', calculadoracont: 'container_name', description: 'Docker container name')
         string(name: 'DOCKER_PORT', defaultValue: '3000', description: 'Docker port')
     }
  
