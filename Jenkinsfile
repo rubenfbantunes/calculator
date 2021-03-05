@@ -43,6 +43,24 @@ pipeline
 				}
 			}
 		}
+        stage ('Sonar') {
+        def scannerHome = tool 'sonarqube';
+        withSonarQubeEnv ('sonarqube') {
+        sh "${scannerHome}/bin/sonar-scanner \
+        -D sonar.login=10e7f044db1f3e3e262be3620838af122f8d2921 \
+        -D sonar.projectKey=Teste \
+        -D sonar.exclusions=vendor/**,resources/**,**/*.java \
+        -D sonar.host.url=http://sonar:9000/"
+        }
+        }
+        stage ('Quality Check') {
+        timeout(time: 1, unit: 'HOURS') {
+        def qualitygate = waitForQualityGate()
+        if (qualitygate.status != "OK") {
+        error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
+        }
+        }
+        }
   
         // Apaga os dados do workspace.
         stage('Stage D - Clean up resources')
