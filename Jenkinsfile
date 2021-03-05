@@ -44,11 +44,11 @@ pipeline
 			}
 		}
         stage ('Sonar') {
-        def scannerHome = tool 'sonarqube';
-        withSonarQubeEnv ('sonarqube') {
+        def scannerHome = tool 'SonarScanner 4.0';
+        withSonarQubeEnv ('sonarqube-server') {
         sh "${scannerHome}/bin/sonar-scanner \
         -D sonar.login=10e7f044db1f3e3e262be3620838af122f8d2921 \
-        -D sonar.projectKey=Teste \
+        -D sonar.projectKey=calculadorasonar \
         -D sonar.exclusions=vendor/**,resources/**,**/*.java \
         -D sonar.host.url=http://sonar:9000/"
         }
