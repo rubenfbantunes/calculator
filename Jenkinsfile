@@ -1,8 +1,6 @@
 pipeline
 {
-    agent {
-        label "mvn-1"
-    }
+    agent any
     parameters
     {
         // Tem que se ir ao Jenkins > Configure > This project is parameterized. 
@@ -14,7 +12,31 @@ pipeline
  
      stages
     {
- 
+        stage ('Sonar Analise') {
+            steps {
+                script {
+        def scannerHome = tool 'MyScanner';
+        withSonarQubeEnv ('sonarqube-server') {
+        sh "${scannerHome}/bin/sonar-scanner \
+        -D sonar.login=8cd7c2c4e035635329bf6895b1edc64b140920f9 \
+        -D sonar.projectKey=calculadorakey \
+        -D sonar.host.url=http://sonar:9000"
+        }
+        }
+        }
+        }
+        stage("Quality Gate") {
+            steps {
+            script {
+                timeout(time: 1, unit: 'HOURS') {
+                    def qualitygate = waitForQualityGate()
+                    if (qualitygate.status != "OK") {
+                    error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
+                    }
+                }
+            }
+        }
+    }
         stage('Stage docker build')
         {
             steps
@@ -43,26 +65,10 @@ pipeline
 				}
 			}
 		}
-        stage ('Sonar') {
-        def scannerHome = tool 'SonarScanner 4.0';
-        withSonarQubeEnv ('sonarqube-server') {
-        sh "${scannerHome}/bin/sonar-scanner \
-        -D sonar.login=10e7f044db1f3e3e262be3620838af122f8d2921 \
-        -D sonar.projectKey=calculadorasonar \
-        -D sonar.exclusions=vendor/**,resources/**,**/*.java \
-        -D sonar.host.url=http://sonar:9000/"
-        }
-        }
-        stage ('Quality Check') {
-        timeout(time: 1, unit: 'HOURS') {
-        def qualitygate = waitForQualityGate()
-        if (qualitygate.status != "OK") {
-        error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
-        }
-        }
-        }
-  
-        // Apaga os dados do workspace.
+    //-------------------------------------------------------------------------Dsonar.sources=. \
+        
+        
+
         stage('Stage D - Clean up resources')
         {
             steps
