@@ -20,6 +20,8 @@ pipeline
         sh "${scannerHome}/bin/sonar-scanner \
         -D sonar.login=8cd7c2c4e035635329bf6895b1edc64b140920f9 \
         -D sonar.projectKey=calculadorakey \
+        -D sonar.java.binaries=/var/jenkins_home/workspace/calculadora-sonar \
+        -D sonar.java.source=11 \
         -D sonar.host.url=http://sonar:9000"
         }
         }
